@@ -81,7 +81,7 @@ client.on("interactionCreate", async interaction => {
 
     const list = items.join("、")
     return interaction.reply(
-      `🎯 **抽選開始**\n選択肢：${list}\n:dart: **抽選結果 ${pick}**`
+      `🎯 **抽選開始**\n選択肢：${list}\n\n:dart: **抽選結果：${pick}**`
     )
   }
 
