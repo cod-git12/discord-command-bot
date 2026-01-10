@@ -14,7 +14,7 @@ client.once("ready", async () => {
   try {
     const channel = await client.channels.fetch(UPDATE_CHANNEL_ID)
     if (channel && channel.isTextBased()) {
-      await channel.send("📢 **アップデートしました**")
+      await channel.send("📢 **アップデートが完了しました**\nアップデートの内容については https://discord.com/channels/1453664112973447311/1453677204301942826 をご覧ください")
     }
   } catch (e) {
     console.error("アップデート通知の送信に失敗:", e)
@@ -31,18 +31,24 @@ client.on("interactionCreate", async interaction => {
     return interaction.reply(`🏓 Pong! ${client.ws.ping}ms`)
   }
 
-  // uptime
+  // uptime（秒まで表示）
   if (name === "uptime") {
-    const sec = Math.floor((Date.now() - startTime) / 1000)
-    const h = Math.floor(sec / 3600)
-    const m = Math.floor((sec % 3600) / 60)
-    return interaction.reply(`⏱ 起動してから ${h}時間${m}分`)
+    const totalSec = Math.floor((Date.now() - startTime) / 1000)
+
+    const h = Math.floor(totalSec / 3600)
+    const m = Math.floor((totalSec % 3600) / 60)
+    const s = totalSec % 60
+
+    return interaction.reply(
+      `⏱ このボットが起動してから ${h}時間${m}分${s}秒 が経過しています`
+    )
   }
+
 
   // nowtime
   if (name === "nowtime") {
     const t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })
-    return interaction.reply(`🕒 今の時間は **${t}**`)
+    return interaction.reply(`🕒 今の時間は **${t}** です！`)
   }
 
   // nowdate（修正）
@@ -54,7 +60,7 @@ client.on("interactionCreate", async interaction => {
       day: "2-digit",
       weekday: "long"
     })
-    return interaction.reply(`📅 今日の日付は **${d}**`)
+    return interaction.reply(`📅 今日の日付は **${d}** です！`)
   }
 
   // dice
@@ -75,7 +81,7 @@ client.on("interactionCreate", async interaction => {
 
     const list = items.join("、")
     return interaction.reply(
-      `🎯 **抽選開始**\n選択肢：${list}\n:dart: **${pick}**`
+      `🎯 **抽選開始**\n選択肢：${list}\n:dart: **抽選結果 ${pick}**`
     )
   }
 
@@ -87,7 +93,7 @@ client.on("interactionCreate", async interaction => {
     }
     try {
       const r = eval(f)
-      return interaction.reply(`🧮 ${f} = **${r}**`)
+      return interaction.reply(`計算完了\n ${f} = **${r}**`)
     } catch {
       return interaction.reply("❌ 計算できません")
     }
