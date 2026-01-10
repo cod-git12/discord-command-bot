@@ -1,3 +1,5 @@
+const UPDATE_CHANNEL_ID = "1453677204301942826"
+
 const { Client, GatewayIntentBits } = require("discord.js")
 
 const client = new Client({
@@ -8,7 +10,17 @@ const startTime = Date.now()
 
 client.once("ready", async () => {
   console.log(`ログイン完了: ${client.user.tag}`)
+
+  try {
+    const channel = await client.channels.fetch(UPDATE_CHANNEL_ID)
+    if (channel && channel.isTextBased()) {
+      await channel.send("📢 **アップデートしました**")
+    }
+  } catch (e) {
+    console.error("アップデート通知の送信に失敗:", e)
+  }
 })
+
 
 client.on("interactionCreate", async interaction => {
   if (!interaction.isChatInputCommand()) return
