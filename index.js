@@ -14,7 +14,7 @@ client.once("ready", async () => {
   try {
     const channel = await client.channels.fetch(UPDATE_CHANNEL_ID)
     if (channel && channel.isTextBased()) {
-      await channel.send("📢 **アップデートが完了しました**\nアップデートの内容については https://discord.com/channels/1453664112973447311/1453677204301942826 をご覧ください")
+      await channel.send("📢 **アップデートが完了しました**\nアップデートの内容については https://discord.com/channels/1453664112973447311/1459489280857477140 をご覧ください")
     }
   } catch (e) {
     console.error("アップデート通知の送信に失敗:", e)
