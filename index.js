@@ -1,5 +1,3 @@
-const UPDATE_CHANNEL_ID = "1453677204301942826"
-
 const { Client, GatewayIntentBits } = require("discord.js")
 
 const client = new Client({
@@ -10,21 +8,10 @@ const startTime = Date.now()
 
 client.once("ready", async () => {
   console.log(`ログイン完了: ${client.user.tag}`)
-
-  try {
-    const channel = await client.channels.fetch(UPDATE_CHANNEL_ID)
-    if (channel && channel.isTextBased()) {
-      await channel.send("📢 **アップデートしました**")
-    }
-  } catch (e) {
-    console.error("アップデート通知の送信に失敗:", e)
-  }
 })
-
 
 client.on("interactionCreate", async interaction => {
   if (!interaction.isChatInputCommand()) return
-
   const name = interaction.commandName
 
   // ping
@@ -46,11 +33,14 @@ client.on("interactionCreate", async interaction => {
     return interaction.reply(`🕒 今の時間は **${t}**`)
   }
 
-  // nowdate
+  // nowdate（修正）
   if (name === "nowdate") {
     const d = new Date().toLocaleDateString("ja-JP", {
       timeZone: "Asia/Tokyo",
-      weekday: "short"
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      weekday: "long"
     })
     return interaction.reply(`📅 今日の日付は **${d}**`)
   }
@@ -60,19 +50,24 @@ client.on("interactionCreate", async interaction => {
     return interaction.reply(`🎲 ${Math.floor(Math.random() * 6) + 1}`)
   }
 
-  // coin
+  // coin（修正）
   if (name === "coin") {
-    return interaction.reply(`🪙 ${Math.random() < 0.5 ? "表" : "裏"}`)
+    const result = Math.random() < 0.5 ? "表" : "裏"
+    return interaction.reply(`🪙 コイントスをしました。\n結果：**${result}**`)
   }
 
-  // random
+  // random（演出追加）
   if (name === "random") {
     const items = interaction.options.getString("items").split(" ")
     const pick = items[Math.floor(Math.random() * items.length)]
-    return interaction.reply(`🎯 ${pick}`)
+
+    const list = items.join("、")
+    return interaction.reply(
+      `🎯 **抽選開始**\n選択肢：${list}\n:dart: **${pick}**`
+    )
   }
 
-  // calc（超簡易・eval注意済み）
+  // calc
   if (name === "calc") {
     const f = interaction.options.getString("formula")
     if (!/^[0-9+\-*/(). ]+$/.test(f)) {
@@ -86,17 +81,28 @@ client.on("interactionCreate", async interaction => {
     }
   }
 
-  // remind
+  // remind（拡張）
   if (name === "remind") {
     const time = interaction.options.getString("time")
     const text = interaction.options.getString("text")
 
-    const match = time.match(/^(\d+)(m|h)$/)
+    const match = time.match(/^(\d+(\.\d+)?)(s|m|h|d)$/)
     if (!match) {
-      return interaction.reply("❌ 時間は 10m、1h の形式で入力してください")
+      return interaction.reply("❌ 例: 10s / 0.1m / 2h / 1d")
     }
 
-    const ms = match[1] * (match[2] === "h" ? 3600000 : 60000)
+    const value = parseFloat(match[1])
+    const unit = match[3]
+
+    const unitMs = {
+      s: 1000,
+      m: 60000,
+      h: 3600000,
+      d: 86400000
+    }
+
+    const ms = value * unitMs[unit]
+
     await interaction.reply(`⏰ ${time}後に通知します`)
 
     setTimeout(() => {
@@ -104,17 +110,26 @@ client.on("interactionCreate", async interaction => {
     }, ms)
   }
 
-  // poll
+  // poll（仕様変更）
   if (name === "poll") {
     const parts = interaction.options.getString("content").split("|").map(s => s.trim())
     const title = parts.shift()
 
-    let msg = `📊 **${title}**\n`
+    await interaction.reply({
+      content: "✅ 投票を作成しました",
+      ephemeral: true
+    })
+
+    let msg =
+      `📊 **${interaction.user.username} からの投票です**\n` +
+      `**${title}**\n`
+
     parts.forEach((p, i) => {
       msg += `${i + 1}. ${p}\n`
     })
 
-    const sent = await interaction.reply({ content: msg, fetchReply: true })
+    const sent = await interaction.channel.send(msg)
+
     const emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
     for (let i = 0; i < parts.length && i < emojis.length; i++) {
       await sent.react(emojis[i])
