@@ -4,6 +4,8 @@ const { REST, Routes, SlashCommandBuilder } = require("discord.js")
 const commands = [
   new SlashCommandBuilder().setName("ping").setDescription("Botの応答速度を確認"),
   new SlashCommandBuilder().setName("uptime").setDescription("Botの稼働時間を表示"),
+  new SlashCommandBuilder().setName("status").setDescription("Botの状態を表示"),
+  new SlashCommandBuilder().setName("help").setDescription("コマンド一覧を表示"),
   new SlashCommandBuilder().setName("nowtime").setDescription("今の時間を表示"),
   new SlashCommandBuilder().setName("nowdate").setDescription("今日の日付を表示"),
   new SlashCommandBuilder().setName("dice").setDescription("サイコロを振る"),
