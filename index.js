@@ -47,7 +47,7 @@ client.once("ready", async () => {
         content:
           "📢 **アップデートが完了しました**\n" +
           "詳細: https://discord.com/channels/1453664112973447311/1459489280857477140",
-        embeds: [createStatusEmbed()]
+//        embeds: [createStatusEmbed()]
       })
     }
   } catch (e) {
