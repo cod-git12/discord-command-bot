@@ -43,7 +43,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN)
 
 ;(async () => {
   await rest.put(
-    Routes.applicationCommands(process.env.CLIENT_ID),
+    Routes.applicationCommands(process.env.CMBOT_CLIENT_ID),
     { body: commands }
   )
   console.log("✅ コマンド登録完了")
